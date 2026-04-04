@@ -1,9 +1,9 @@
 import type { Config } from '../types.js';
 
 export const DEFAULT_CONFIG: Config = {
-  style: 'powerline',
+  style: 'minimal',
   theme: 'default',
-  icons: 'nerd',
+  icons: 'ascii',
   max_width: 'auto',
   thresholds: {
     context_warn: 50,
