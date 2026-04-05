@@ -26,42 +26,56 @@ export class CodexProvider extends BaseProvider {
     const lines = readFileSync(rolloutPath, 'utf-8').split('\n').filter(Boolean);
 
     let sessionMeta: any = null;
+    let turnContext: any = null;
     let tokenCount: any = null;
 
-    // Read from end for efficiency — last session_meta and token_count
+    // Read from end for efficiency — find last token_count, turn_context, session_meta
     for (let i = lines.length - 1; i >= 0; i--) {
       try {
         const entry = JSON.parse(lines[i]);
+
+        // token_count is nested: { type: "event_msg", payload: { type: "token_count", info: {...}, rate_limits: {...} } }
         if (!tokenCount && entry.type === 'event_msg' && entry.payload?.type === 'token_count') {
           tokenCount = entry.payload;
         }
-        if (!sessionMeta && entry.type === 'session_meta') {
-          sessionMeta = entry.payload ?? entry;
+
+        // turn_context has the model name: { type: "turn_context", payload: { model: "gpt-5.4", ... } }
+        if (!turnContext && entry.type === 'turn_context') {
+          turnContext = entry.payload;
         }
-        if (sessionMeta && tokenCount) break;
+
+        // session_meta has session id and cwd: { type: "session_meta", payload: { id: "...", cwd: "..." } }
+        if (!sessionMeta && entry.type === 'session_meta') {
+          sessionMeta = entry.payload;
+        }
+
+        if (sessionMeta && turnContext && tokenCount) break;
       } catch { /* skip malformed lines */ }
     }
 
-    const modelName = sessionMeta?.model ?? sessionMeta?.model_id ?? 'unknown';
-    const sessionId = sessionMeta?.session_id ?? 'unknown';
+    const modelName = turnContext?.model ?? 'unknown';
+    const sessionId = sessionMeta?.id ?? 'unknown';
     const cwd = options?.cwd ?? sessionMeta?.cwd ?? process.cwd();
 
-    // Derive context usage from token counts if available
-    const inputTokens = tokenCount?.input_tokens ?? 0;
-    const outputTokens = tokenCount?.output_tokens ?? 0;
-    const maxTokens = tokenCount?.max_context_tokens ?? sessionMeta?.context_window_size ?? 0;
-    const usedPct = maxTokens > 0 ? Math.round(((inputTokens + outputTokens) / maxTokens) * 100) : null;
+    // Token usage is at payload.info.total_token_usage
+    const usage = tokenCount?.info?.total_token_usage;
+    const inputTokens = usage?.input_tokens ?? 0;
+    const outputTokens = usage?.output_tokens ?? 0;
+    const maxTokens = tokenCount?.info?.model_context_window ?? 0;
+    const totalUsed = inputTokens + outputTokens;
+    const usedPct = maxTokens > 0 ? Math.round((totalUsed / maxTokens) * 100) : null;
 
-    // Rate limits from rollout
-    const rateLimits = tokenCount?.rate_limit_primary != null ? {
+    // Rate limits are at payload.rate_limits
+    const rl = tokenCount?.rate_limits;
+    const rateLimits = rl?.primary ? {
       five_hour: {
-        used_percentage: tokenCount.rate_limit_primary.used_percent ?? 0,
-        resets_at: tokenCount.rate_limit_primary.resets_at,
+        used_percentage: rl.primary.used_percent ?? 0,
+        resets_at: rl.primary.resets_at ? rl.primary.resets_at * 1000 : undefined,
       },
-      ...(tokenCount.rate_limit_secondary ? {
+      ...(rl.secondary ? {
         seven_day: {
-          used_percentage: tokenCount.rate_limit_secondary.used_percent ?? 0,
-          resets_at: tokenCount.rate_limit_secondary.resets_at,
+          used_percentage: rl.secondary.used_percent ?? 0,
+          resets_at: rl.secondary.resets_at ? rl.secondary.resets_at * 1000 : undefined,
         },
       } : {}),
     } : undefined;
@@ -80,7 +94,7 @@ export class CodexProvider extends BaseProvider {
       } : undefined,
       rate_limits: rateLimits,
       git: { branch: this.getGitBranch(cwd) },
-      _raw: { sessionMeta, tokenCount },
+      _raw: { sessionMeta, turnContext, tokenCount },
     };
   }
 
@@ -88,7 +102,7 @@ export class CodexProvider extends BaseProvider {
     const sessionsDir = join(this.codexHome, 'sessions');
     if (!existsSync(sessionsDir)) return undefined;
 
-    // Check today's directory first, then scan
+    // Check today's directory first, then scan recent
     const now = new Date();
     const dateDir = join(
       sessionsDir,
@@ -102,7 +116,6 @@ export class CodexProvider extends BaseProvider {
       if (latest) return latest;
     }
 
-    // Fallback: scan recent date directories
     return this.scanRecent(sessionsDir);
   }
 
