@@ -7,7 +7,8 @@ export class GitAgent extends BaseAgent {
   compute(input: UnifiedInput, config: Config): Segment | null {
     if (!input.git) return null;
 
-    const label = input.git.branch ?? input.git.worktree_name ?? 'unknown';
+    const label = input.git.branch ?? input.git.worktree_name;
+    if (!label) return null;
 
     return {
       id: this.id,
