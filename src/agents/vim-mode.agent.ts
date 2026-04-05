@@ -1,4 +1,4 @@
-import { BaseAgent, type ClaudeCodeInput, type Config, type Segment } from '../types.js';
+import { BaseAgent, type UnifiedInput, type Config, type Segment } from '../types.js';
 import { getIcon } from '../render/icons.js';
 
 const MODE_COLORS: Record<string, string> = {
@@ -11,7 +11,7 @@ const DEFAULT_MODE_COLOR = '#c678dd';
 export class VimModeAgent extends BaseAgent {
   readonly id = 'vim-mode';
 
-  compute(input: ClaudeCodeInput, config: Config): Segment | null {
+  compute(input: UnifiedInput, config: Config): Segment | null {
     if (!input.vim) return null;
 
     const mode = input.vim.mode;

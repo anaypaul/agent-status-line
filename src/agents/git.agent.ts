@@ -1,13 +1,13 @@
-import { BaseAgent, type ClaudeCodeInput, type Config, type Segment } from '../types.js';
+import { BaseAgent, type UnifiedInput, type Config, type Segment } from '../types.js';
 import { getIcon } from '../render/icons.js';
 
 export class GitAgent extends BaseAgent {
   readonly id = 'git';
 
-  compute(input: ClaudeCodeInput, config: Config): Segment | null {
-    if (!input.worktree) return null;
+  compute(input: UnifiedInput, config: Config): Segment | null {
+    if (!input.git) return null;
 
-    const label = input.worktree.branch ?? input.worktree.name;
+    const label = input.git.branch ?? input.git.worktree_name ?? 'unknown';
 
     return {
       id: this.id,

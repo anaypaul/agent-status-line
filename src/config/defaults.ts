@@ -24,4 +24,6 @@ export const DEFAULT_CONFIG: Config = {
     'directory': { enabled: true, position: 7, options: { shorten: true, max_length: 30 } },
     'session': { enabled: false, position: 8, options: { show_duration: true } },
   },
+  provider: undefined,
+  watch: { enabled: false, interval_ms: 2000 },
 };

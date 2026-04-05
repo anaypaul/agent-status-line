@@ -1,10 +1,10 @@
-import { BaseAgent, type ClaudeCodeInput, type Config, type Segment } from '../types.js';
+import { BaseAgent, type UnifiedInput, type Config, type Segment } from '../types.js';
 import { getIcon } from '../render/icons.js';
 
 export class ModelAgent extends BaseAgent {
   readonly id = 'model';
 
-  compute(input: ClaudeCodeInput, config: Config): Segment | null {
+  compute(input: UnifiedInput, config: Config): Segment | null {
     return {
       id: this.id,
       icon: getIcon('model', config.icons),

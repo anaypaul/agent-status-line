@@ -1,11 +1,11 @@
-import type { ClaudeCodeInput, Config, Segment } from './types.js';
+import type { UnifiedInput, Config, Segment } from './types.js';
 import { getAgents } from './agents/registry.js';
 import { loadConfig } from './config/loader.js';
 import { getTheme } from './themes/index.js';
 import { render } from './render/pipeline.js';
 import { readStdinInput } from './input.js';
 
-export function run(input: ClaudeCodeInput, config?: Config): string {
+export function run(input: UnifiedInput, config?: Config): string {
   const cfg = config ?? loadConfig();
   const theme = getTheme(cfg.theme);
   const agents = getAgents(cfg);
@@ -33,4 +33,5 @@ export function main(): void {
 export { loadConfig } from './config/loader.js';
 export { getTheme } from './themes/index.js';
 export { getAgents } from './agents/registry.js';
-export type { ClaudeCodeInput, Config, Segment, ThemeDefinition } from './types.js';
+export { detectProvider, getProviderByName } from './providers/detect.js';
+export type { UnifiedInput, ClaudeCodeInput, Config, Segment, ThemeDefinition, ProviderName } from './types.js';

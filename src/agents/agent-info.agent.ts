@@ -1,10 +1,10 @@
-import { BaseAgent, type ClaudeCodeInput, type Config, type Segment } from '../types.js';
+import { BaseAgent, type UnifiedInput, type Config, type Segment } from '../types.js';
 import { getIcon } from '../render/icons.js';
 
 export class AgentInfoAgent extends BaseAgent {
   readonly id = 'agent-info';
 
-  compute(input: ClaudeCodeInput, config: Config): Segment | null {
+  compute(input: UnifiedInput, config: Config): Segment | null {
     if (!input.agent) return null;
 
     let label = input.agent.name;

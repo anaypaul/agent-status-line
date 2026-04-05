@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
-import { main, run, loadConfig } from '../src/index.js';
-import type { ClaudeCodeInput } from '../src/types.js';
+import { run, loadConfig } from '../src/index.js';
+import { detectProvider, getProviderByName } from '../src/providers/detect.js';
+import { watch } from '../src/watch.js';
+import type { UnifiedInput, ProviderName } from '../src/types.js';
 
-const SAMPLE_INPUT: ClaudeCodeInput = {
+const SAMPLE_INPUT: UnifiedInput = {
+  provider: 'claude-code',
   session_id: 'a7c21d25-3220-4098-bcce-594b993ee20d',
   session_name: 'refactor-auth',
   transcript_path: '/Users/dev/.claude/projects/myapp/session.jsonl',
@@ -42,19 +45,32 @@ const SAMPLE_INPUT: ClaudeCodeInput = {
     total_lines_removed: 34,
   },
   vim: { mode: 'NORMAL' },
-  worktree: {
-    name: 'feat-auth',
-    path: '/Users/dev/workspace/my-project-wt-feat-auth',
+  git: {
+    worktree_name: 'feat-auth',
+    worktree_path: '/Users/dev/workspace/my-project-wt-feat-auth',
     branch: 'feat/auth-refactor',
   },
 };
 
-const subcommand = process.argv[2];
+// ── Arg parsing ──
+
+const args = process.argv.slice(2);
+
+function getFlag(name: string): string | undefined {
+  const idx = args.indexOf(name);
+  return idx !== -1 && idx + 1 < args.length ? args[idx + 1] : undefined;
+}
+
+const subcommand = args.find(a => !a.startsWith('--'));
+const providerFlag = getFlag('--provider');
+const watchFlag = args.includes('--watch');
+const intervalFlag = getFlag('--interval');
+
+// ── Subcommands ──
 
 switch (subcommand) {
   case 'preview': {
     const config = loadConfig();
-    // Show all three styles
     const styles = ['minimal', 'powerline', 'capsule'] as const;
     for (const style of styles) {
       const cfg = { ...config, style };
@@ -97,7 +113,26 @@ switch (subcommand) {
   }
 
   default: {
-    // Default: read stdin and render status line
-    main();
+    // Main entry: auto-detect or explicit provider, optional watch mode
+    (async () => {
+      try {
+        const config = loadConfig();
+        const provider = providerFlag
+          ? getProviderByName(providerFlag as ProviderName)
+          : await detectProvider();
+
+        if (watchFlag) {
+          const intervalMs = intervalFlag ? parseInt(intervalFlag, 10) : (config.watch?.interval_ms ?? 2000);
+          await watch({ provider, config, intervalMs });
+        } else {
+          const input = await provider.read();
+          const output = run(input, config);
+          process.stdout.write(output + '\n');
+        }
+      } catch {
+        // Silent failure — status line should never crash the host CLI
+        process.exit(0);
+      }
+    })();
   }
 }

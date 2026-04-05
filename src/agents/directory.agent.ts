@@ -1,11 +1,11 @@
-import { BaseAgent, type ClaudeCodeInput, type Config, type Segment } from '../types.js';
+import { BaseAgent, type UnifiedInput, type Config, type Segment } from '../types.js';
 import { getIcon } from '../render/icons.js';
 import { shortenPath } from '../utils/path-shorten.js';
 
 export class DirectoryAgent extends BaseAgent {
   readonly id = 'directory';
 
-  compute(input: ClaudeCodeInput, config: Config): Segment | null {
+  compute(input: UnifiedInput, config: Config): Segment | null {
     const label = shortenPath(input.cwd);
 
     return {

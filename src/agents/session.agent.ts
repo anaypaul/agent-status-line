@@ -1,14 +1,14 @@
-import { BaseAgent, type ClaudeCodeInput, type Config, type Segment } from '../types.js';
+import { BaseAgent, type UnifiedInput, type Config, type Segment } from '../types.js';
 import { getIcon } from '../render/icons.js';
 import { formatDuration } from '../utils/duration.js';
 
 export class SessionAgent extends BaseAgent {
   readonly id = 'session';
 
-  compute(input: ClaudeCodeInput, config: Config): Segment | null {
+  compute(input: UnifiedInput, config: Config): Segment | null {
     const name = input.session_name ?? input.session_id.slice(0, 8);
-    const duration = formatDuration(input.cost.total_duration_ms);
-    const label = `${name} ${duration}`;
+    const durationMs = input.cost?.total_duration_ms;
+    const label = durationMs != null ? `${name} ${formatDuration(durationMs)}` : name;
 
     return {
       id: this.id,

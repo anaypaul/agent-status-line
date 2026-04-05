@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
-import type { ClaudeCodeInput } from './types.js';
+import type { UnifiedInput } from './types.js';
 
-export function readStdinInput(): ClaudeCodeInput {
+export function readStdinInput(): UnifiedInput {
   const raw = readFileSync('/dev/stdin', 'utf-8');
   const parsed = JSON.parse(raw);
-  return parsed as ClaudeCodeInput;
+  return parsed as UnifiedInput;
 }

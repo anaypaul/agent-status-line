@@ -1,4 +1,5 @@
 {
+  "provider": "claude-code",
   "session_id": "a7c21d25-3220-4098-bcce-594b993ee20d",
   "session_name": "refactor-auth",
   "transcript_path": "/Users/dev/.claude/projects/myapp/session.jsonl",
@@ -40,9 +41,9 @@
     "total_lines_removed": 34
   },
   "vim": { "mode": "NORMAL" },
-  "worktree": {
-    "name": "feat-auth",
-    "path": "/Users/dev/workspace/my-project-wt-feat-auth",
+  "git": {
+    "worktree_name": "feat-auth",
+    "worktree_path": "/Users/dev/workspace/my-project-wt-feat-auth",
     "branch": "feat/auth-refactor"
   }
 }

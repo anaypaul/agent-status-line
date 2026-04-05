@@ -26,6 +26,8 @@ export const ConfigSchema = z.object({
   max_width: z.union([z.number(), z.literal('auto')]).optional().default(DEFAULT_CONFIG.max_width),
   thresholds: ThresholdsSchema.optional().default({}),
   agents: z.record(AgentConfigSchema).optional().default({}),
+  provider: z.enum(['claude-code', 'codex', 'gemini', 'opencode']).optional(),
+  watch: z.object({ enabled: z.boolean().default(false), interval_ms: z.number().default(2000) }).optional(),
 });
 
 function deepMerge<T extends Record<string, unknown>>(base: T, override: Record<string, unknown>): T {

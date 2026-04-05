@@ -1,11 +1,11 @@
-import { BaseAgent, type ClaudeCodeInput, type Config, type Segment } from '../types.js';
+import { BaseAgent, type UnifiedInput, type Config, type Segment } from '../types.js';
 import { getIcon } from '../render/icons.js';
 import { formatCountdown } from '../utils/duration.js';
 
 export class RateLimitAgent extends BaseAgent {
   readonly id = 'rate-limit';
 
-  compute(input: ClaudeCodeInput, config: Config): Segment | null {
+  compute(input: UnifiedInput, config: Config): Segment | null {
     if (!input.rate_limits) return null;
 
     const fiveHour = input.rate_limits.five_hour;

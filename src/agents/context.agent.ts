@@ -1,11 +1,13 @@
-import { BaseAgent, type ClaudeCodeInput, type Config, type Segment } from '../types.js';
+import { BaseAgent, type UnifiedInput, type Config, type Segment } from '../types.js';
 import { getIcon } from '../render/icons.js';
 import { progressBar } from '../utils/progress-bar.js';
 
 export class ContextAgent extends BaseAgent {
   readonly id = 'context';
 
-  compute(input: ClaudeCodeInput, config: Config): Segment | null {
+  compute(input: UnifiedInput, config: Config): Segment | null {
+    if (!input.context_window) return null;
+
     const pct = input.context_window.used_percentage;
 
     if (pct === null || pct === undefined) {

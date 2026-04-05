@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { run } from '../src/index.js';
 import { DEFAULT_CONFIG } from '../src/config/defaults.js';
-import type { ClaudeCodeInput } from '../src/types.js';
+import type { UnifiedInput } from '../src/types.js';
 import { stripAnsi } from '../src/render/ansi.js';
 import sampleInput from './fixtures/sample-input.json';
 
-const input = sampleInput as ClaudeCodeInput;
+const input = sampleInput as UnifiedInput;
 
 describe('pipeline', () => {
   it('renders minimal style with all segments', () => {
