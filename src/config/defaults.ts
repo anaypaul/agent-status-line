@@ -15,7 +15,7 @@ export const DEFAULT_CONFIG: Config = {
   },
   agents: {
     'directory': { enabled: true, position: 0, options: { shorten: true, max_length: 30 } },
-    'git': { enabled: true, position: 1, options: { max_branch_length: 20 } },
+    'git': { enabled: false, position: 1, options: { max_branch_length: 20 } },
     'model': { enabled: true, position: 2, options: {} },
     'rate-limit': { enabled: true, position: 3, options: { show_seven_day: true, show_reset_countdown: true } },
     'context': { enabled: true, position: 4, options: { bar_width: 8, show_bar: true } },
