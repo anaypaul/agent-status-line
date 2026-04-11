@@ -11,7 +11,10 @@ export function render(segments: Segment[], config: Config, theme: ThemeDefiniti
     ? (process.stdout.columns ?? 120)
     : config.max_width;
 
-  const fitted = truncateSegments(segments, maxWidth, estimateSegmentWidth);
+  // max_width: 0 means no truncation — show all segments
+  const fitted = maxWidth === 0
+    ? segments
+    : truncateSegments(segments, maxWidth, estimateSegmentWidth);
 
   switch (config.style) {
     case 'minimal':

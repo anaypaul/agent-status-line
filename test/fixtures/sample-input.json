@@ -3,14 +3,14 @@
   "session_id": "a7c21d25-3220-4098-bcce-594b993ee20d",
   "session_name": "refactor-auth",
   "transcript_path": "/Users/dev/.claude/projects/myapp/session.jsonl",
-  "cwd": "/Users/dev/workspace/my-project",
+  "cwd": "/Users/dev/workspace/my-project/src/components",
   "version": "1.0.71",
   "model": {
     "id": "claude-opus-4-6",
     "display_name": "Claude Opus 4.6 (1M)"
   },
   "workspace": {
-    "current_dir": "/Users/dev/workspace/my-project",
+    "current_dir": "/Users/dev/workspace/my-project/src/components",
     "project_dir": "/Users/dev/workspace/my-project"
   },
   "output_style": {
