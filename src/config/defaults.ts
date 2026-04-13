@@ -2,7 +2,7 @@ import type { Config } from '../types.js';
 
 export const DEFAULT_CONFIG: Config = {
   style: 'minimal',
-  theme: 'default',
+  theme: 'auto',
   icons: 'ascii',
   max_width: 0,
   thresholds: {

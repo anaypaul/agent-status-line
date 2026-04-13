@@ -20,12 +20,19 @@ export async function runWizard(): Promise<void> {
   const theme = await select({
     message: 'Choose color theme:',
     choices: [
+      { name: 'Auto (detect terminal background)', value: 'auto' },
       { name: 'Default (Catppuccin-inspired)', value: 'default' },
       { name: 'Catppuccin Mocha', value: 'catppuccin' },
       { name: 'Gruvbox Dark', value: 'gruvbox' },
       { name: 'Nord', value: 'nord' },
       { name: 'Monokai Pro', value: 'monokai' },
       { name: 'Solarized Dark', value: 'solarized' },
+      { name: 'Default Light', value: 'default-light' },
+      { name: 'Catppuccin Latte (light)', value: 'catppuccin-light' },
+      { name: 'Gruvbox Light', value: 'gruvbox-light' },
+      { name: 'Nord Light', value: 'nord-light' },
+      { name: 'Monokai Light', value: 'monokai-light' },
+      { name: 'Solarized Light', value: 'solarized-light' },
     ],
   });
 
