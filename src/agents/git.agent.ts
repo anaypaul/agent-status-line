@@ -23,6 +23,9 @@ export class GitAgent extends BaseAgent {
       label = label.slice(0, maxLen - 1) + '…';
     }
 
+    // Wrap in parentheses for visual clarity
+    label = `(${label})`;
+
     return {
       id: this.id,
       icon: getIcon('git', config.icons),
